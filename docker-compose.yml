@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-planos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-planos}
+      POSTGRES_DB: ${POSTGRES_DB:-planos_de_aula}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-planos}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-planos}:${POSTGRES_PASSWORD:-planos}@db:5432/${POSTGRES_DB:-planos_de_aula}
+      PORT: 3001
+      NODE_ENV: production
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    command: >
+      sh -c "npx prisma migrate deploy && node src/app.js"
+    ports:
+      - "3001:3001"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  pgdata:
