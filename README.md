@@ -4,6 +4,8 @@ Aplicação web para organizar planos de aula, consultar conteúdos por filtros 
 
 O projeto foi desenvolvido como uma solução completa para o desafio de manutenção de software: API REST, interface SPA, banco PostgreSQL, integração configurável com IA, Docker e pipeline de lint no GitHub Actions.
 
+**Deploy:** [planos-de-aula.vercel.app](https://planos-de-aula.vercel.app)
+
 ## Interface
 
 ![Tela de listagem dos planos de aula](docs/screenshots/listagem.jpg)
