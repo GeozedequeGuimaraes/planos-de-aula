@@ -4,9 +4,9 @@ Aplicação web para organizar planos de aula, consultar conteúdos por filtros 
 
 O projeto foi desenvolvido como uma solução completa para o desafio de manutenção de software: API REST, interface SPA, banco PostgreSQL, integração configurável com IA, Docker e pipeline de lint no GitHub Actions.
 
-**Deploy atual do frontend:** [planos-de-aula.vercel.app](https://planos-de-aula.vercel.app)
+**Deploy:** [planos-de-aula-web.onrender.com](https://planos-de-aula-web.onrender.com)
 
-Para rodar frontend, backend e banco juntos em produção, o repositório também inclui um Blueprint do Render em `render.yaml`.
+O projeto usa um Blueprint do Render (`render.yaml`) que sobe frontend, backend e banco juntos.
 
 ## Interface
 
