@@ -8,8 +8,20 @@
 
 body {
   margin: 0;
-  background-color: #f6faf7;
-  color: #10201c;
+  background-color: #f7f4ee;
+  color: #22201c;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+select {
+  -webkit-tap-highlight-color: transparent;
 }

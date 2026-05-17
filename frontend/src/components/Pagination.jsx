@@ -10,11 +10,11 @@ export default function Pagination({ meta, onPageChange }) {
   )
 
   return (
-    <div className="flex items-center justify-center gap-1 mt-10">
+    <div className="mt-8 flex items-center justify-center gap-1">
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={page === 1}
-        className="w-8 h-8 rounded-lg border border-sage-200 bg-white flex items-center justify-center text-ink-muted hover:bg-surface disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="flex h-9 w-9 items-center justify-center rounded-lg border border-sage-200 bg-paper text-ink-muted transition-colors hover:bg-sage-100 disabled:cursor-not-allowed disabled:opacity-40"
       >
         <ChevronLeft size={14} strokeWidth={2} />
       </button>
@@ -24,14 +24,14 @@ export default function Pagination({ meta, onPageChange }) {
         return (
           <span key={p} className="flex items-center gap-1">
             {prev && p - prev > 1 && (
-              <span className="w-8 text-center text-ink-light text-sm">…</span>
+              <span className="w-8 text-center text-sm text-ink-light">…</span>
             )}
             <button
               onClick={() => onPageChange(p)}
-              className={`w-8 h-8 rounded-lg text-[13px] font-medium transition-colors ${
+              className={`h-9 w-9 rounded-lg text-[13px] font-medium transition-colors ${
                 p === page
                   ? 'bg-forest-600 text-white border border-forest-600'
-                  : 'border border-sage-200 bg-white text-ink-muted hover:bg-surface'
+                  : 'border border-sage-200 bg-paper text-ink-muted hover:bg-sage-100'
               }`}
             >
               {p}
@@ -43,7 +43,7 @@ export default function Pagination({ meta, onPageChange }) {
       <button
         onClick={() => onPageChange(page + 1)}
         disabled={page === totalPages}
-        className="w-8 h-8 rounded-lg border border-sage-200 bg-white flex items-center justify-center text-ink-muted hover:bg-surface disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="flex h-9 w-9 items-center justify-center rounded-lg border border-sage-200 bg-paper text-ink-muted transition-colors hover:bg-sage-100 disabled:cursor-not-allowed disabled:opacity-40"
       >
         <ChevronRight size={14} strokeWidth={2} />
       </button>

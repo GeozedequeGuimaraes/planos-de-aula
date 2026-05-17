@@ -7,51 +7,57 @@ function formatDate(iso) {
 
 export default function LessonPlanCard({ plan, onDelete }) {
   return (
-    <article className="bg-white border border-sage-200 rounded-xl shadow-sm shadow-forest-900/5 flex flex-col hover:-translate-y-0.5 hover:shadow-md hover:shadow-forest-900/8 transition-all duration-200">
-      <div className="p-5 flex-1">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.8px] text-ink-muted mb-2">
-          {plan.discipline}
-        </p>
-        <h2 className="font-display text-[16.5px] font-semibold text-ink leading-snug mb-2.5">
+    <article className="grid gap-4 rounded-lg border border-sage-200 bg-paper p-4 shadow-sm shadow-black/[0.03] transition-colors hover:border-sage-300 md:grid-cols-[1fr_auto]">
+      <div className="min-w-0">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <span className="rounded-md bg-denim-light px-2 py-1 text-[11px] font-semibold text-denim">
+            {plan.discipline}
+          </span>
+          <span className="flex items-center gap-1.5 text-[12px] text-ink-light">
+            <Calendar size={12} strokeWidth={1.8} />
+            {formatDate(plan.scheduledAt)}
+          </span>
+        </div>
+
+        <h2 className="text-[17px] font-semibold leading-snug text-ink">
           {plan.title}
         </h2>
-        <p className="text-[13px] text-ink-muted leading-relaxed line-clamp-2 mb-4">
+        <p className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-ink-muted line-clamp-2">
           {plan.summary}
         </p>
 
         {plan.tags?.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {plan.tags.map((tag) => (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {plan.tags.slice(0, 5).map((tag) => (
               <span
                 key={tag}
-                className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-surface border border-sage-200 text-ink-muted"
+                className="rounded-md border border-sage-200 bg-surface px-2 py-1 text-[11.5px] font-medium text-ink-muted"
               >
-                {tag}
+                #{tag}
               </span>
             ))}
           </div>
         )}
       </div>
 
-      <div className="px-5 py-3.5 border-t border-sage-200 flex items-center justify-between">
-        <div className="flex items-center gap-1.5 text-[12px] text-ink-light">
-          <Calendar size={12} strokeWidth={1.8} />
-          {formatDate(plan.scheduledAt)}
-        </div>
-        <div className="flex gap-1">
-          <Link
-            to={`/planos/${plan.id}/editar`}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-ink-muted hover:bg-surface hover:text-ink transition-colors"
-          >
-            <Pencil size={13} strokeWidth={1.8} />
-          </Link>
-          <button
-            onClick={() => onDelete(plan)}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-ink-muted hover:bg-red-50 hover:text-red-600 transition-colors"
-          >
-            <Trash2 size={13} strokeWidth={1.8} />
-          </button>
-        </div>
+      <div className="flex items-center gap-1 md:justify-end">
+        <Link
+          to={`/planos/${plan.id}/editar`}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-sage-100 hover:text-ink"
+          aria-label={`Editar ${plan.title}`}
+          title="Editar"
+        >
+          <Pencil size={15} strokeWidth={1.8} />
+        </Link>
+        <button
+          type="button"
+          onClick={() => onDelete(plan)}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-clay-light hover:text-clay"
+          aria-label={`Remover ${plan.title}`}
+          title="Remover"
+        >
+          <Trash2 size={15} strokeWidth={1.8} />
+        </button>
       </div>
     </article>
   )

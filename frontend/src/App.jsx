@@ -5,9 +5,9 @@ import FormPage from './pages/FormPage'
 
 export default function App() {
   return (
-    <div className="flex min-h-screen bg-surface">
+    <div className="min-h-screen bg-surface">
       <Sidebar />
-      <main className="ml-60 flex-1 min-h-screen">
+      <main className="min-h-screen lg:pl-64">
         <Routes>
           <Route path="/" element={<Navigate to="/planos" replace />} />
           <Route path="/planos" element={<ListingPage />} />
