@@ -4,7 +4,9 @@ Aplicação web para organizar planos de aula, consultar conteúdos por filtros 
 
 O projeto foi desenvolvido como uma solução completa para o desafio de manutenção de software: API REST, interface SPA, banco PostgreSQL, integração configurável com IA, Docker e pipeline de lint no GitHub Actions.
 
-**Deploy:** [planos-de-aula.vercel.app](https://planos-de-aula.vercel.app)
+**Deploy atual do frontend:** [planos-de-aula.vercel.app](https://planos-de-aula.vercel.app)
+
+Para rodar frontend, backend e banco juntos em produção, o repositório também inclui um Blueprint do Render em `render.yaml`.
 
 ## Interface
 
@@ -144,7 +146,33 @@ Parâmetros da listagem:
 | `page` | Página atual |
 | `limit` | Quantidade por página |
 
-## Deploy
+## Deploy Full-Stack
+
+A forma mais simples de publicar a aplicação completa é pelo Render Blueprint. Ele cria três recursos a partir do `render.yaml`:
+
+| Recurso | Função |
+| --- | --- |
+| `planos-de-aula-api` | Backend Docker com Express, Prisma e health check |
+| `planos-de-aula-web` | Frontend React estático com fallback de SPA |
+| `planos-de-aula-db` | PostgreSQL usado pela API |
+
+No Render:
+
+1. Crie um Blueprint apontando para este repositório.
+2. Informe `GEMINI_API_KEY` nas variáveis do serviço `planos-de-aula-api`.
+3. Confirme se `VITE_API_URL` no serviço `planos-de-aula-web` aponta para a URL pública da API criada pelo Render.
+4. Faça o deploy. O backend executa `npx prisma db push && node src/app.js` ao iniciar.
+
+O Blueprint usa Gemini por padrão:
+
+```env
+AI_PROVIDER=gemini
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+Se preferir OpenAI, altere `AI_PROVIDER=openai` no Render e preencha `OPENAI_API_KEY`.
+
+## Deploy Manual
 
 O projeto está pronto para deploy via Docker. Em um servidor ou serviço com suporte a containers, configure:
 
