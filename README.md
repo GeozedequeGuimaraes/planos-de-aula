@@ -6,9 +6,9 @@ O projeto foi desenvolvido como uma solução completa para o desafio de manuten
 
 ## Interface
 
-![Tela de listagem dos planos de aula](docs/screenshots/listagem.png)
+![Tela de listagem dos planos de aula](docs/screenshots/listagem.jpg)
 
-![Tela de cadastro com rascunho assistido](docs/screenshots/formulario.png)
+![Tela de cadastro com rascunho assistido](docs/screenshots/formulario.jpg)
 
 ## O que a aplicação faz
 
