@@ -2,7 +2,7 @@
 
 Aplicação web para organizar planos de aula, consultar conteúdos por filtros e gerar sugestões pedagógicas a partir do tema da aula.
 
-O projeto foi desenvolvido como uma solução completa para o desafio de manutenção de software: API REST, interface SPA, banco PostgreSQL, integração com OpenAI, Docker e pipeline de lint no GitHub Actions.
+O projeto foi desenvolvido como uma solução completa para o desafio de manutenção de software: API REST, interface SPA, banco PostgreSQL, integração configurável com IA, Docker e pipeline de lint no GitHub Actions.
 
 ## Interface
 
@@ -16,7 +16,7 @@ O projeto foi desenvolvido como uma solução completa para o desafio de manuten
 - Paginação, busca por título e filtros por disciplina, tags e data prevista.
 - Ordenação por título, data de cadastro ou data prevista.
 - Formulário validado com campos pedagógicos essenciais: objetivo, ementa, conteúdos, recursos e tags.
-- Rascunho assistido com OpenAI para sugerir conteúdos, recursos de apoio e três tags.
+- Rascunho assistido com OpenAI ou Gemini para sugerir conteúdos, recursos de apoio e três tags.
 - Health check em `/health`.
 - Logs estruturados para operações principais e chamadas ao serviço de IA.
 - Execução com Docker Compose em um único comando.
@@ -27,7 +27,7 @@ A interface foi pensada como uma ferramenta de trabalho para docentes e conteudi
 
 O assistente não substitui a autoria do professor: ele aparece como apoio ao rascunho. A resposta da IA preenche campos editáveis, mantendo a revisão humana como parte natural do fluxo.
 
-No backend, a API foi separada por camadas simples: rotas, controllers, services, validação e tratamento de erros. A chave da OpenAI é lida por variável de ambiente e nunca deve ser versionada.
+No backend, a API foi separada por camadas simples: rotas, controllers, services, validação e tratamento de erros. As chaves de IA são lidas por variável de ambiente e nunca devem ser versionadas.
 
 ## Stack
 
@@ -36,7 +36,7 @@ No backend, a API foi separada por camadas simples: rotas, controllers, services
 | Frontend | React, Vite, Tailwind CSS, React Query |
 | Backend | Node.js, Express, Joi |
 | Banco | PostgreSQL, Prisma ORM |
-| IA | OpenAI API |
+| IA | OpenAI API ou Gemini API |
 | Infra | Docker, Docker Compose, Nginx |
 | CI | GitHub Actions com lint de frontend e backend |
 
@@ -45,7 +45,7 @@ No backend, a API foi separada por camadas simples: rotas, controllers, services
 Pré-requisitos:
 
 - Docker Desktop ou Docker Engine com Compose.
-- Uma chave da OpenAI para usar o rascunho assistido.
+- Uma chave da OpenAI ou Gemini para usar o rascunho assistido.
 
 Crie o arquivo de ambiente:
 
@@ -53,13 +53,25 @@ Crie o arquivo de ambiente:
 cp .env.example .env
 ```
 
-Preencha a chave no `.env`:
+Preencha o provedor de IA no `.env`. Exemplo com OpenAI:
 
 ```env
 POSTGRES_USER=planos
 POSTGRES_PASSWORD=planos
 POSTGRES_DB=planos_de_aula
+AI_PROVIDER=openai
 OPENAI_API_KEY=sk-...
+```
+
+Exemplo com Gemini:
+
+```env
+POSTGRES_USER=planos
+POSTGRES_PASSWORD=planos
+POSTGRES_DB=planos_de_aula
+AI_PROVIDER=gemini
+GEMINI_API_KEY=sua-chave-do-google-ai-studio
+GEMINI_MODEL=gemini-2.5-flash
 ```
 
 Suba a aplicação:
@@ -135,7 +147,8 @@ Parâmetros da listagem:
 O projeto está pronto para deploy via Docker. Em um servidor ou serviço com suporte a containers, configure:
 
 - `DATABASE_URL` apontando para um PostgreSQL.
-- `OPENAI_API_KEY` com uma chave válida da OpenAI.
+- `AI_PROVIDER` com `openai` ou `gemini`.
+- `OPENAI_API_KEY` ou `GEMINI_API_KEY`, conforme o provedor escolhido.
 - `PORT=3001` no backend.
 - `VITE_API_URL` no build do frontend, apontando para a URL pública da API.
 
@@ -154,9 +167,9 @@ Para o backend em produção, o comando usado no Compose é:
 npx prisma db push && node src/app.js
 ```
 
-## Observações sobre a OpenAI
+## Observações sobre IA
 
-O rascunho assistido depende de cota disponível na conta da OpenAI. Se a chave estiver sem créditos ou sem billing ativo, a aplicação informa o problema na própria tela.
+O rascunho assistido depende de cota disponível no provedor configurado. O Gemini pode ser uma alternativa interessante para demonstrações por ter camada gratuita no Google AI Studio, mas ela também possui limites de uso. Se a chave estiver sem créditos, sem billing ativo ou com cota excedida, a aplicação informa o problema na própria tela.
 
 Nunca publique `.env`, chaves de API ou tokens no repositório.
 

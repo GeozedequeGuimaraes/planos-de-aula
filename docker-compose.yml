@@ -22,7 +22,11 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-planos}:${POSTGRES_PASSWORD:-planos}@db:5432/${POSTGRES_DB:-planos_de_aula}
       PORT: 3001
       NODE_ENV: production
+      AI_PROVIDER: ${AI_PROVIDER:-openai}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
     command: >
       sh -c "npx prisma db push && node src/app.js"
     ports:

@@ -16,7 +16,7 @@ export async function assist(req, res, next) {
 
     if (err.status === 429) {
       return res.status(503).json({
-        error: 'A chave da OpenAI está sem cota disponível ou sem billing ativo. Verifique créditos e cobrança na conta da OpenAI.',
+        error: 'O provedor de IA está sem cota disponível ou com limite excedido. Verifique créditos, billing ou troque o AI_PROVIDER.',
       })
     }
 
