@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Sparkles, Loader2, X, Plus, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, AlertCircle, CheckCircle2, ClipboardPenLine, Loader2, Plus, X } from 'lucide-react'
 import { lessonPlanApi } from '../services/api'
 
 function TagInput({ value, onChange }) {
@@ -154,7 +154,10 @@ function LessonPlanForm({ id, initialForm }) {
         tags: result.tags?.length ? result.tags : f.tags,
       }))
       setAssistStatus('done')
-    } catch {
+    } catch (err) {
+      setAssistError(
+        err.response?.data?.error || 'Falha ao gerar recomendações. Tente novamente.'
+      )
       setAssistStatus('error')
     }
   }
@@ -211,15 +214,19 @@ function LessonPlanForm({ id, initialForm }) {
           <textarea className={`${inputClass} resize-y min-h-[88px]`} placeholder="Resumo do conteúdo a ser abordado na aula..." value={form.summary} onChange={set('summary')} required />
         </Field>
 
-        {/* Smart Assist */}
-        <div className="flex flex-col gap-4 rounded-lg border border-amber/25 bg-amber-light p-4 sm:flex-row sm:items-start">
-          <div className="mt-0.5 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-amber">
-            <Sparkles size={18} className="text-white" strokeWidth={1.8} />
+        <div className="grid gap-4 rounded-lg border border-sage-200 bg-surface p-4 sm:grid-cols-[auto_1fr_auto] sm:items-start">
+          <div className="mt-0.5 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-sage-200 bg-paper text-forest-800">
+            <ClipboardPenLine size={18} strokeWidth={1.8} />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="text-[15px] font-semibold text-ink">Assistente pedagógico</h3>
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-[15px] font-semibold text-ink">Rascunho assistido</h3>
+              <span className="rounded-md border border-sage-200 bg-paper px-2 py-0.5 text-[11px] font-semibold text-ink-light">
+                IA
+              </span>
+            </div>
             <p className="mt-0.5 text-[12.5px] leading-relaxed text-ink-muted">
-              Com título, disciplina e ementa preenchidos, ele sugere conteúdos, recursos e tags.
+              Use como ponto de partida: revise as sugestões antes de salvar o plano.
             </p>
             {assistError && (
               <p className="mt-2 flex items-center gap-1.5 text-[12px] font-medium text-amber">
@@ -233,7 +240,7 @@ function LessonPlanForm({ id, initialForm }) {
             )}
             {assistStatus === 'error' && (
               <p className="mt-2 flex items-center gap-1.5 text-[12px] font-medium text-clay">
-                <AlertCircle size={13} /> Falha ao gerar recomendações. Tente novamente.
+                <AlertCircle size={13} /> {assistError || 'Falha ao gerar recomendações. Tente novamente.'}
               </p>
             )}
           </div>
@@ -241,12 +248,12 @@ function LessonPlanForm({ id, initialForm }) {
             type="button"
             onClick={handleAssist}
             disabled={assistStatus === 'loading'}
-            className="flex flex-shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-amber px-4 py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-amber-hover disabled:opacity-70"
+            className="flex flex-shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-forest-800 px-4 py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-forest-700 disabled:opacity-70"
           >
             {assistStatus === 'loading' ? (
               <><Loader2 size={14} className="animate-spin" /> Gerando...</>
             ) : (
-              <><Sparkles size={14} strokeWidth={2} /> Gerar Recomendações</>
+              <><ClipboardPenLine size={14} strokeWidth={2} /> Gerar recomendações com IA</>
             )}
           </button>
         </div>

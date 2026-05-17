@@ -15,7 +15,9 @@ export async function assist(req, res, next) {
     logger.error('Falha na chamada ao serviço de IA', { message: err.message })
 
     if (err.status === 429) {
-      return res.status(503).json({ error: 'Serviço de IA temporariamente indisponível. Tente novamente em instantes.' })
+      return res.status(503).json({
+        error: 'A chave da OpenAI está sem cota disponível ou sem billing ativo. Verifique créditos e cobrança na conta da OpenAI.',
+      })
     }
 
     next(err)

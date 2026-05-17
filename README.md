@@ -1,74 +1,96 @@
 # Planos de Aula
 
-Sistema de gerenciamento de planos de aula com sugestão inteligente de conteúdos pedagógicos.
+Aplicação web para organizar planos de aula, consultar conteúdos por filtros e gerar sugestões pedagógicas a partir do tema da aula.
 
-## Funcionalidades
+O projeto foi desenvolvido como uma solução completa para o desafio de manutenção de software: API REST, interface SPA, banco PostgreSQL, integração com OpenAI, Docker e pipeline de lint no GitHub Actions.
 
-- **CRUD completo** de planos de aula com paginação, filtros e ordenação
-- **Smart Assist** — gera sugestões de conteúdos, recursos e tags usando IA
-- Filtros por disciplina, tags e data prevista
-- Busca por título
-- Interface responsiva com sidebar fixa
+## Interface
+
+![Tela de listagem dos planos de aula](docs/screenshots/listagem.png)
+
+![Tela de cadastro com rascunho assistido](docs/screenshots/formulario.png)
+
+## O que a aplicação faz
+
+- Cadastro, edição, remoção e listagem de planos de aula.
+- Paginação, busca por título e filtros por disciplina, tags e data prevista.
+- Ordenação por título, data de cadastro ou data prevista.
+- Formulário validado com campos pedagógicos essenciais: objetivo, ementa, conteúdos, recursos e tags.
+- Rascunho assistido com OpenAI para sugerir conteúdos, recursos de apoio e três tags.
+- Health check em `/health`.
+- Logs estruturados para operações principais e chamadas ao serviço de IA.
+- Execução com Docker Compose em um único comando.
+
+## Decisões de projeto
+
+A interface foi pensada como uma ferramenta de trabalho para docentes e conteudistas. Em vez de uma tela promocional, a primeira experiência já entrega consulta, filtros e criação de planos.
+
+O assistente não substitui a autoria do professor: ele aparece como apoio ao rascunho. A resposta da IA preenche campos editáveis, mantendo a revisão humana como parte natural do fluxo.
+
+No backend, a API foi separada por camadas simples: rotas, controllers, services, validação e tratamento de erros. A chave da OpenAI é lida por variável de ambiente e nunca deve ser versionada.
 
 ## Stack
 
 | Camada | Tecnologia |
-|--------|-----------|
-| Backend | Node.js + Express + Prisma ORM |
-| Banco de dados | PostgreSQL |
-| Frontend | React + Vite + Tailwind CSS |
-| IA | OpenAI GPT-4o |
-| Infraestrutura | Docker + Docker Compose |
-| CI | GitHub Actions |
+| --- | --- |
+| Frontend | React, Vite, Tailwind CSS, React Query |
+| Backend | Node.js, Express, Joi |
+| Banco | PostgreSQL, Prisma ORM |
+| IA | OpenAI API |
+| Infra | Docker, Docker Compose, Nginx |
+| CI | GitHub Actions com lint de frontend e backend |
 
-## Como rodar
+## Como rodar com Docker
 
-### Pré-requisitos
+Pré-requisitos:
 
-- Docker e Docker Compose instalados
-- Chave de API da OpenAI
+- Docker Desktop ou Docker Engine com Compose.
+- Uma chave da OpenAI para usar o rascunho assistido.
 
-### 1. Clone e configure o ambiente
+Crie o arquivo de ambiente:
 
 ```bash
-git clone https://github.com/GeozedequeGuimaraes/planos-de-aula.git
-cd planos-de-aula
 cp .env.example .env
 ```
 
-Edite o arquivo `.env` e preencha a variável `OPENAI_API_KEY` com sua chave.
+Preencha a chave no `.env`:
 
-### 2. Suba a aplicação
+```env
+POSTGRES_USER=planos
+POSTGRES_PASSWORD=planos
+POSTGRES_DB=planos_de_aula
+OPENAI_API_KEY=sk-...
+```
+
+Suba a aplicação:
 
 ```bash
 docker compose up --build
 ```
 
-Aguarde todos os serviços iniciarem. O banco de dados e as migrações são executados automaticamente.
-
-### 3. Acesse
+Acesse:
 
 | Serviço | URL |
-|---------|-----|
-| Frontend | http://localhost |
-| Backend (API) | http://localhost:3001 |
-| Health check | http://localhost:3001/health |
+| --- | --- |
+| Frontend | `http://localhost` |
+| Backend | `http://localhost:3001` |
+| Health check | `http://localhost:3001/health` |
 
----
+O backend sincroniza o schema do Prisma ao iniciar o container.
 
 ## Desenvolvimento local
 
-### Backend
+Backend:
 
 ```bash
 cd backend
-cp .env.example .env   # configure DATABASE_URL e OPENAI_API_KEY
+cp .env.example .env
 npm install
-npx prisma migrate dev
+npx prisma generate
 npm run dev
 ```
 
-### Frontend
+Frontend:
 
 ```bash
 cd frontend
@@ -77,75 +99,95 @@ npm install
 npm run dev
 ```
 
-## Estrutura do projeto
+Se o frontend estiver fora do Docker, configure:
 
-```
-planos-de-aula/
-├── backend/
-│   ├── prisma/
-│   │   └── schema.prisma
-│   └── src/
-│       ├── config/        # conexão com banco
-│       ├── controllers/   # handlers das rotas
-│       ├── middlewares/   # validação, erros
-│       ├── routes/        # definição de rotas
-│       ├── services/      # lógica de negócio e IA
-│       └── utils/         # logger
-├── frontend/
-│   └── src/
-│       ├── components/    # Sidebar, Card, Paginação
-│       ├── pages/         # ListingPage, FormPage
-│       └── services/      # cliente HTTP
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-└── docker-compose.yml
-```
-
-## Endpoints da API
-
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/health` | Health check |
-| GET | `/api/planos` | Lista planos (com filtros e paginação) |
-| POST | `/api/planos` | Cria um novo plano |
-| GET | `/api/planos/:id` | Busca plano por ID |
-| PUT | `/api/planos/:id` | Atualiza um plano |
-| DELETE | `/api/planos/:id` | Remove um plano |
-| POST | `/api/smart-assist` | Gera recomendações com IA |
-
-### Parâmetros de listagem
-
-| Parâmetro | Tipo | Descrição |
-|-----------|------|-----------|
-| `search` | string | Busca por título |
-| `discipline` | string | Filtra por disciplina |
-| `tags` | string | Tags separadas por vírgula |
-| `scheduledAt` | ISO date | Filtra a partir dessa data |
-| `orderBy` | `title` \| `createdAt` \| `scheduledAt` | Campo de ordenação |
-| `order` | `asc` \| `desc` | Direção da ordenação |
-| `page` | number | Página atual (padrão: 1) |
-| `limit` | number | Itens por página (padrão: 10) |
-
-## Variáveis de ambiente
-
-### Raiz (docker-compose)
-```env
-POSTGRES_USER=planos
-POSTGRES_PASSWORD=planos
-POSTGRES_DB=planos_de_aula
-OPENAI_API_KEY=sk-...
-```
-
-### Backend (`backend/.env`)
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/planos_de_aula
-PORT=3001
-OPENAI_API_KEY=sk-...
-NODE_ENV=development
-```
-
-### Frontend (`frontend/.env`)
 ```env
 VITE_API_URL=http://localhost:3001/api
 ```
+
+## Endpoints
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| `GET` | `/health` | Verifica o estado da API |
+| `GET` | `/api/planos` | Lista planos com filtros e paginação |
+| `POST` | `/api/planos` | Cria um plano |
+| `GET` | `/api/planos/:id` | Busca um plano por ID |
+| `PUT` | `/api/planos/:id` | Atualiza um plano |
+| `DELETE` | `/api/planos/:id` | Remove um plano |
+| `POST` | `/api/smart-assist` | Gera sugestões pedagógicas |
+
+Parâmetros da listagem:
+
+| Parâmetro | Descrição |
+| --- | --- |
+| `search` | Busca por título |
+| `discipline` | Filtra por disciplina |
+| `tags` | Filtra por tags separadas por vírgula |
+| `scheduledAt` | Filtra a partir de uma data prevista |
+| `orderBy` | `title`, `createdAt` ou `scheduledAt` |
+| `order` | `asc` ou `desc` |
+| `page` | Página atual |
+| `limit` | Quantidade por página |
+
+## Deploy
+
+O projeto está pronto para deploy via Docker. Em um servidor ou serviço com suporte a containers, configure:
+
+- `DATABASE_URL` apontando para um PostgreSQL.
+- `OPENAI_API_KEY` com uma chave válida da OpenAI.
+- `PORT=3001` no backend.
+- `VITE_API_URL` no build do frontend, apontando para a URL pública da API.
+
+Para buildar o frontend com uma API pública:
+
+```bash
+docker build \
+  --build-arg VITE_API_URL=https://sua-api.com/api \
+  -t planos-de-aula-frontend \
+  ./frontend
+```
+
+Para o backend em produção, o comando usado no Compose é:
+
+```bash
+npx prisma db push && node src/app.js
+```
+
+## Observações sobre a OpenAI
+
+O rascunho assistido depende de cota disponível na conta da OpenAI. Se a chave estiver sem créditos ou sem billing ativo, a aplicação informa o problema na própria tela.
+
+Nunca publique `.env`, chaves de API ou tokens no repositório.
+
+## Estrutura
+
+```text
+planos-de-aula/
+├── backend/
+│   ├── prisma/
+│   └── src/
+│       ├── config/
+│       ├── controllers/
+│       ├── middlewares/
+│       ├── routes/
+│       ├── services/
+│       └── utils/
+├── frontend/
+│   ├── public/
+│   └── src/
+│       ├── components/
+│       ├── pages/
+│       └── services/
+├── docs/
+│   └── screenshots/
+├── docker-compose.yml
+└── .github/workflows/ci.yml
+```
+
+## Autor
+
+Geozedeque Guimarães  
+Estudante de Ciência da Computação, CIn-UFPE
+
+[GitHub](https://github.com/GeozedequeGuimaraes) · [LinkedIn](https://linkedin.com/in/geozedeque-guimaraes)

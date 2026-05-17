@@ -1,15 +1,9 @@
 import { NavLink } from 'react-router-dom'
-import { BookOpen, CalendarDays, ClipboardList, Plus, Search, Tags } from 'lucide-react'
+import { BookOpen, ClipboardList, Plus } from 'lucide-react'
 
 const navItems = [
   { to: '/planos', label: 'Planos', icon: ClipboardList, end: true },
   { to: '/planos/novo', label: 'Criar', icon: Plus },
-]
-
-const quickStats = [
-  { label: 'Busca', icon: Search },
-  { label: 'Tags', icon: Tags },
-  { label: 'Datas', icon: CalendarDays },
 ]
 
 export default function Sidebar() {
@@ -69,15 +63,17 @@ export default function Sidebar() {
             </NavLink>
           ))}
 
-          <div className="mt-7 rounded-lg border border-sage-200 bg-surface p-4">
-            <p className="text-[12px] font-semibold text-ink">Critérios do desafio</p>
-            <div className="mt-3 space-y-2">
-              {quickStats.map(({ label, icon: Icon }) => (
-                <div key={label} className="flex items-center gap-2 text-[12.5px] text-ink-muted">
-                  <Icon size={13} strokeWidth={1.9} className="text-forest-700" />
-                  {label} na listagem
-                </div>
-              ))}
+          <div className="mt-7 overflow-hidden rounded-lg border border-sage-200 bg-surface">
+            <img
+              src="/images/biblioteca-planejamento.jpg"
+              alt=""
+              className="h-36 w-full object-cover"
+            />
+            <div className="p-4">
+              <p className="text-[12px] font-semibold text-ink">Rotina de planejamento</p>
+              <p className="mt-1 text-[12px] leading-relaxed text-ink-muted">
+                Do tema da aula aos recursos de apoio, tudo em um fluxo só.
+              </p>
             </div>
           </div>
         </nav>
